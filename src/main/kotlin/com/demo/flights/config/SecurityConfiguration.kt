@@ -71,19 +71,21 @@ class SecurityConfiguration(
             logout.logoutSuccessHandler(logoutSuccessHandler())
         }
         //Authorize
-        http.authorizeHttpRequests { authorization ->
-            authorization
-                .dispatcherTypeMatchers(DispatcherType.FORWARD, DispatcherType.ERROR).permitAll()
-                .requestMatchers("/", "/index.html", "/assets/**").permitAll()
-                .requestMatchers("/api/addon/**").authenticated()
-                .requestMatchers("/graphql").permitAll()
+        http.authorizeHttpRequests { authorizeHttpRequests ->
+            authorizeHttpRequests
+                .requestMatchers("/api/**").authenticated()
                 .requestMatchers("/graphql/**").permitAll()
+                .requestMatchers("/graphql").permitAll()
+                .requestMatchers("/api/addon/**").authenticated()
+                .requestMatchers("/", "/index.html", "/assets/**").permitAll()
+                .anyRequest().authenticated()
         }
         //CORS
         http.cors(Customizer.withDefaults())
         //CSRF
         http.csrf { csrf -> csrf.disable() }
 
+        http.httpBasic(Customizer.withDefaults())
         return http.build()
     }
 
